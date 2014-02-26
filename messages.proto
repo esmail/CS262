@@ -1,0 +1,17 @@
+package atm_message;
+
+message User {
+  required string version_num = 1;
+  required bytes checksum = 2;
+  required string opcode = 3;
+  required int32 account_num = 4;
+  optional int32 bal = 5;
+}
+
+message ServerResponse {
+  required string version_num = 1;
+  required bytes checksum = 2;
+  required string opcode = 3;
+  optional int32 account_num = 4;
+  optional int32 bal = 5;
+}
