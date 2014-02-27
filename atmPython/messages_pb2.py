@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='messages.proto',
   package='atm_message',
-  serialized_pb='\n\x0emessages.proto\x12\x0b\x61tm_message\"\\\n\rClientRequest\x12\x0f\n\x07version\x18\x01 \x02(\t\x12\x10\n\x08\x63hecksum\x18\x02 \x02(\t\x12\x0e\n\x06opcode\x18\x03 \x02(\t\x12\x0b\n\x03\x61\x63t\x18\x04 \x02(\x05\x12\x0b\n\x03\x62\x61l\x18\x05 \x01(\x05\"t\n\x0eServerResponse\x12\x0f\n\x07version\x18\x01 \x02(\t\x12\x10\n\x08\x63hecksum\x18\x02 \x02(\t\x12\x0e\n\x06opcode\x18\x03 \x02(\t\x12\x0b\n\x03\x61\x63t\x18\x04 \x01(\x05\x12\x0b\n\x03\x62\x61l\x18\x05 \x01(\x05\x12\x15\n\rerror_message\x18\x06 \x01(\t')
+  serialized_pb='\n\x0emessages.proto\x12\x0b\x61tm_message\"\\\n\rClientRequest\x12\x0f\n\x07version\x18\x01 \x02(\t\x12\x10\n\x08\x63hecksum\x18\x02 \x02(\x0c\x12\x0e\n\x06opcode\x18\x03 \x02(\t\x12\x0b\n\x03\x61\x63t\x18\x04 \x02(\x05\x12\x0b\n\x03\x62\x61l\x18\x05 \x01(\x05\"t\n\x0eServerResponse\x12\x0f\n\x07version\x18\x01 \x02(\t\x12\x10\n\x08\x63hecksum\x18\x02 \x02(\x0c\x12\x0e\n\x06opcode\x18\x03 \x02(\t\x12\x0b\n\x03\x61\x63t\x18\x04 \x01(\x05\x12\x0b\n\x03\x62\x61l\x18\x05 \x01(\x05\x12\x15\n\rerror_message\x18\x06 \x01(\t')
 
 
 
@@ -34,8 +34,8 @@ _CLIENTREQUEST = _descriptor.Descriptor(
       options=None),
     _descriptor.FieldDescriptor(
       name='checksum', full_name='atm_message.ClientRequest.checksum', index=1,
-      number=2, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=unicode("", "utf-8"),
+      number=2, type=12, cpp_type=9, label=2,
+      has_default_value=False, default_value="",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -90,8 +90,8 @@ _SERVERRESPONSE = _descriptor.Descriptor(
       options=None),
     _descriptor.FieldDescriptor(
       name='checksum', full_name='atm_message.ServerResponse.checksum', index=1,
-      number=2, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=unicode("", "utf-8"),
+      number=2, type=12, cpp_type=9, label=2,
+      has_default_value=False, default_value="",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
