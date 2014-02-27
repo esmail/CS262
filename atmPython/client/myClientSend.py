@@ -12,13 +12,16 @@ def create_request(conn):
     
     print "CREATING AN ACCOUNT \n"
     print "enter a starting balance:"
+	buffer = new message_pb2.User
+	buffer.version_num = 'x\01'
+	buffer.opcode = 'x\10'
     while True:
         try:
             netBuffer = int(raw_input('>> '))
         except ValueError:
             continue
         if(netBuffer >= 0 and netBuffer < maxint):
-            bal = netBuffer
+            buffer.bal = netbuffer
             break
         
     print "enter a an account number 1-100(input 0 for a random number):"
@@ -29,19 +32,21 @@ def create_request(conn):
             continue
         
         if(netBuffer > 0 and netBuffer <= 100):
-            act = netBuffer
+			buffer.account_num = netBuffer
             break
         elif(netBuffer == 0):
             act = -1
             break
     
-    send_message('\x01' + pack('!I',8) + '\x10' + pack('!II',bal,act),conn)
-    
+	send_buffer(buffer, conn)
     return
 
 #delete an existing account
 def delete_request(conn):
     print "DELETING AN ACCOUNT \n"
+	buffer = new message_pb2.User
+	buffer.version_num = 'x\01'
+	buffer.opcode = 'x\20'
     print "enter a an account number 1-100:"
     while True:
         try:
@@ -50,15 +55,18 @@ def delete_request(conn):
             continue
         
         if(netBuffer > 0 and netBuffer <= 100):
-            act = netBuffer
+            buffer.account_num = netBuffer
             break
-    
-    send_message('\x01' + pack('!I',4) + '\x20' + pack('!I',act),conn)
+
+    send_buffer(buffer, conn)
     return
 
 #deposit to an existing account
 def deposit_request(conn):
     print "DEPOSITING SOME DOUGH \n"
+	buffer = new message_pb2.User
+	buffer.version_num = 'x\01'
+	buffer.opcode = 'x\30'
     print "enter a an account number 1-100:"
     while True:
         try:
@@ -67,7 +75,7 @@ def deposit_request(conn):
             continue
         
         if(netBuffer > 0 and netBuffer <= 100):
-            act = netBuffer
+            buffer.account_num = netbuffer
             break
     print "enter an amount to deposit:"
     while True:
@@ -76,15 +84,18 @@ def deposit_request(conn):
         except ValueError:
             continue
         if(netBuffer >= 0 and netBuffer < maxint):
-            bal = netBuffer
+            buffer.bal = netbuffer
             break
-        
-    send_message('\x01' + pack('!I',8) + '\x30' + pack('!II',act,bal),conn)
-    return
+	
+    send_buffer(buffer, conn)
+	return
 
 #withdraw from an existing account
 def withdraw_request(conn):
     print "WITHDRAWING SOME DOUGH \n"
+	buffer = new message_pb2.User
+	buffer.version_num = 'x\01'
+	buffer.opcode = 'x\40'
     print "enter a an account number 1-100:"
     while True:
         try:
@@ -93,7 +104,7 @@ def withdraw_request(conn):
             continue
         
         if(netBuffer > 0 and netBuffer <= 100):
-            act = netBuffer
+            buffer.account_num = netbuffer
             break
         
     print "enter an amount to withdraw:"
@@ -103,15 +114,18 @@ def withdraw_request(conn):
         except ValueError:
             continue
         if(netBuffer >= 0 and netBuffer < maxint):
-            bal = netBuffer
+            buffer.bal = netbuffer
             break
-        
-    send_message('\x01' + pack('!I',8) + '\x40' + pack('!II',act,bal),conn)
-    return
+    
+	send_buffer(buffer, conn)
+	return
 
 #withdraw from an existing account
 def balance_request(conn):
     print "CHECKING THE BALANCE OF AN ACCOUNT \n"
+	buffer = new message_pb2.User
+	buffer.version_num = 'x\01'
+	buffer.opcode = 'x\50'
     print "enter a an account number 1-100:"
     while True:
         try:
@@ -120,15 +134,18 @@ def balance_request(conn):
             continue
         
         if(netBuffer > 0 and netBuffer <= 100):
-            act = netBuffer
+            buffer.account_num = netBuffer
             break
 
-    send_message('\x01' + pack('!I',4) + '\x50' + pack('!I',act),conn)
+    send_buffer(buffer, conn)
     return
 
 #end a session
 def end_session(conn):
-    send_message('\x01\x00\x00\x00\x00\x60',conn)
+	buffer = new message_pb2.User
+	buffer.version_num = 'x\01'
+	buffer.opcode = 'x\60'
+    send_buffer(buffer, conn)
     return
 
 def send_message(message, conn):
@@ -139,3 +156,12 @@ def send_message(message, conn):
             print "ERROR: connection down"
             exit()
     return
+
+#function to encrypt message and create a hash and then send it to the server
+def send_buffer(buffer, conn):
+    buffer.checksum = md5.new(buffer.SerializeToString)
+	buffer_string = buffer.SerializeToString
+	length = len(buffer_string)
+	send_message(pack('!I', length),conn)
+	send_message(buffer_string, conn)
+	return
