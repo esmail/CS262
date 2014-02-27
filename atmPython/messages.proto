@@ -1,17 +1,17 @@
 package atm_message;
 
 message ClientRequest {
-  required string   version   = 1;
+  required bytes    version   = 1;
   required bytes    checksum  = 2;
-  required string   opcode    = 3;
-  required int32    act       = 4;
+  required bytes    opcode    = 3;
+  optional int32    act       = 4;
   optional int32    bal       = 5;
 }
 
 message ServerResponse {
-  required string   version       = 1;
+  required bytes    version       = 1;
   required bytes    checksum      = 2;
-  required string   opcode        = 3;
+  required bytes    opcode        = 3;
   optional int32    act           = 4;
   optional int32    bal           = 5;
   optional string   error_message = 6;

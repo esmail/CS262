@@ -10,14 +10,23 @@ import sys
 sys.path.append('./..')
 import messages_pb2
 
+
 # Repackage our GPB message into a list of values so we can reuse this code with only minor modification
 def repackage_message(message):
   values = list()
-  values[0] = message.act
   
-  # The create, withdraw, and deposit messages additionally include an amount
-  if message.opcode in ['\x10', '\x30', '\x40']:
-    values[1] = message.bal
+  # Use a slightly weird method of referencing opcodes by the functions that handle them so the code is less opaque
+  if  opcodes[message.opcode] == end_session:
+    None
+  
+  else:
+    values.append(message.act)
+    
+    # The create, withdraw, and deposit messages additionally include an amount
+    if opcodes[message.opcode] in [create_request, deposit_request, withdraw_request]:
+      values.append(message.bal)
+    
+  return values
 
 #create new account
 def create_request(conn,message,myData,lock):
@@ -197,4 +206,12 @@ def end_session(conn,message,myData,lock):
     return
 
 
+#opcode associations
+opcodes = {'\x10': create_request, 
+           '\x20': delete_request,
+           '\x30': deposit_request,
+           '\x40': withdraw_request,
+           '\x50': balance_request,
+           '\x60': end_session
+           }
 

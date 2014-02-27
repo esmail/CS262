@@ -8,24 +8,16 @@ version = '\x01'
 
 import socket
 from myClientSend import *
-from myClientReceive import *
+from myClientReceive import opcodes
 import sys
-from struct import unpack
+import struct
 
-#opcode associations; note that these opcodes will be returned by the serverzl;khjapoiwpe
-opcodes = {'\x11': create_success,
-           '\x12': general_failure,  
-           '\x21': delete_success,
-           '\x22': general_failure,
-           '\x31': deposit_success,
-           '\x32': general_failure,
-           '\x41': withdraw_success,
-           '\x42': general_failure,
-           '\x51': balance_success,
-           '\x52': general_failure,
-           '\x61': end_session_success,
-           '\x62': unknown_opcode
-           }
+# Import the interface to our GPB messages
+sys.path.append('./..')
+import messages_pb2
+
+from myServer import verify_checksum
+
 
 def getInput():
     print '''
@@ -41,6 +33,8 @@ CONNECTED TO ATM SERVER - type the number of a function:
     return netBuffer
 
 def processInput(netBuffer, mySocket):
+    request_serviced = True
+    
     #create
     if netBuffer == str(1):
         create_request(mySocket)
@@ -64,8 +58,11 @@ def processInput(netBuffer, mySocket):
     #quit
     elif netBuffer == str(6):
         end_session(mySocket)
+    
+    else:
+      request_serviced = False
         
-    return
+    return request_serviced
         
 def getResponse(mySocket):
     #wait for server responses...
@@ -77,15 +74,24 @@ def getResponse(mySocket):
             print "ERROR: connection down"
             sys.exit()
             
-        if len(retBuffer) != 0:
+        if len(retBuffer) >= 4:
+          # Get the GPB message length
+          length = struct.unpack('!I',retBuffer[0:4])[0]
+          
+          if len(retBuffer) == 4:
+            # Only received the length so far
+            retBuffer += mySocket.recv( 1024 )
             
-            header = unpack('!cIc',retBuffer[0:6])
+          if (len(retBuffer) == (length + 4)):
+            # Populate the message with the data received
+            message = messages_pb2.ServerResponse()
+            message.ParseFromString(retBuffer[4:4+length])
             #only allow correct version numbers
-            if header[0] == version:
-                opcode = header[2]
+            if (message.version== version) and verify_checksum(message):
+                opcode = message.opcode
                 #send packet to correct handler
                 try:
-                    opcodes[opcode](mySocket,retBuffer)
+                    opcodes[opcode](mySocket,message)
                 except KeyError:
                     break
             #mySocket.send ('\x01\x01\x02\x03\x53\x10\x12\x34')
@@ -94,23 +100,28 @@ def getResponse(mySocket):
     
 if __name__ == '__main__':
     if(len(sys.argv) != 3):
-        print "ERROR: Usage 'python myClient.py <host> <port>'"
-        sys.exit()
-        
+      # Use defaults
+      myHost = 'localhost'
+      myPort = '8080'
+#         print "ERROR: Usage 'python myClient.py <host> <port>'"
+#         sys.exit()
+    else:    
     #get the address of the server
-    myHost = sys.argv[1]
-    myPort = sys.argv[2]
+      myHost = sys.argv[1]
+      myPort = sys.argv[2]
+      
     mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #mySocket.settimeout(5.)
     try:
-        mySocket.connect ( ( myHost, int(myPort)) )
+      mySocket.connect ( ( myHost, int(myPort)) )
     except:
-        print "ERROR: could not connect to " + myHost + ":" + myPort
-        sys.exit()
+      print "ERROR: could not connect to " + myHost + ":" + myPort
+      sys.exit()
 
     while True:
-        netBuffer = getInput()
-        #menu selection and function priming
-        processInput(netBuffer, mySocket)
+      netBuffer = getInput()
+      #menu selection and function priming
+      if (processInput(netBuffer, mySocket)):
         getResponse(mySocket)
 
     mySocket.close()
