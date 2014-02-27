@@ -13,48 +13,48 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='messages.proto',
   package='atm_message',
-  serialized_pb='\n\x0emessages.proto\x12\x0b\x61tm_message\"_\n\x04User\x12\x13\n\x0bversion_num\x18\x01 \x02(\t\x12\x10\n\x08\x63hecksum\x18\x02 \x02(\x0c\x12\x0e\n\x06opcode\x18\x03 \x02(\t\x12\x13\n\x0b\x61\x63\x63ount_num\x18\x04 \x02(\x05\x12\x0b\n\x03\x62\x61l\x18\x05 \x01(\x05\"i\n\x0eServerResponse\x12\x13\n\x0bversion_num\x18\x01 \x02(\t\x12\x10\n\x08\x63hecksum\x18\x02 \x02(\x0c\x12\x0e\n\x06opcode\x18\x03 \x02(\t\x12\x13\n\x0b\x61\x63\x63ount_num\x18\x04 \x01(\x05\x12\x0b\n\x03\x62\x61l\x18\x05 \x01(\x05')
+  serialized_pb='\n\x0emessages.proto\x12\x0b\x61tm_message\"\\\n\rClientRequest\x12\x0f\n\x07version\x18\x01 \x02(\t\x12\x10\n\x08\x63hecksum\x18\x02 \x02(\t\x12\x0e\n\x06opcode\x18\x03 \x02(\t\x12\x0b\n\x03\x61\x63t\x18\x04 \x02(\x05\x12\x0b\n\x03\x62\x61l\x18\x05 \x01(\x05\"t\n\x0eServerResponse\x12\x0f\n\x07version\x18\x01 \x02(\t\x12\x10\n\x08\x63hecksum\x18\x02 \x02(\t\x12\x0e\n\x06opcode\x18\x03 \x02(\t\x12\x0b\n\x03\x61\x63t\x18\x04 \x01(\x05\x12\x0b\n\x03\x62\x61l\x18\x05 \x01(\x05\x12\x15\n\rerror_message\x18\x06 \x01(\t')
 
 
 
 
-_USER = _descriptor.Descriptor(
-  name='User',
-  full_name='atm_message.User',
+_CLIENTREQUEST = _descriptor.Descriptor(
+  name='ClientRequest',
+  full_name='atm_message.ClientRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='version_num', full_name='atm_message.User.version_num', index=0,
+      name='version', full_name='atm_message.ClientRequest.version', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='checksum', full_name='atm_message.User.checksum', index=1,
-      number=2, type=12, cpp_type=9, label=2,
-      has_default_value=False, default_value="",
+      name='checksum', full_name='atm_message.ClientRequest.checksum', index=1,
+      number=2, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='opcode', full_name='atm_message.User.opcode', index=2,
+      name='opcode', full_name='atm_message.ClientRequest.opcode', index=2,
       number=3, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='account_num', full_name='atm_message.User.account_num', index=3,
+      name='act', full_name='atm_message.ClientRequest.act', index=3,
       number=4, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='bal', full_name='atm_message.User.bal', index=4,
+      name='bal', full_name='atm_message.ClientRequest.bal', index=4,
       number=5, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -70,7 +70,7 @@ _USER = _descriptor.Descriptor(
   is_extendable=False,
   extension_ranges=[],
   serialized_start=31,
-  serialized_end=126,
+  serialized_end=123,
 )
 
 
@@ -82,7 +82,7 @@ _SERVERRESPONSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='version_num', full_name='atm_message.ServerResponse.version_num', index=0,
+      name='version', full_name='atm_message.ServerResponse.version', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
@@ -90,8 +90,8 @@ _SERVERRESPONSE = _descriptor.Descriptor(
       options=None),
     _descriptor.FieldDescriptor(
       name='checksum', full_name='atm_message.ServerResponse.checksum', index=1,
-      number=2, type=12, cpp_type=9, label=2,
-      has_default_value=False, default_value="",
+      number=2, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -103,7 +103,7 @@ _SERVERRESPONSE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='account_num', full_name='atm_message.ServerResponse.account_num', index=3,
+      name='act', full_name='atm_message.ServerResponse.act', index=3,
       number=4, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -116,6 +116,13 @@ _SERVERRESPONSE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='error_message', full_name='atm_message.ServerResponse.error_message', index=5,
+      number=6, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -125,18 +132,18 @@ _SERVERRESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=128,
-  serialized_end=233,
+  serialized_start=125,
+  serialized_end=241,
 )
 
-DESCRIPTOR.message_types_by_name['User'] = _USER
+DESCRIPTOR.message_types_by_name['ClientRequest'] = _CLIENTREQUEST
 DESCRIPTOR.message_types_by_name['ServerResponse'] = _SERVERRESPONSE
 
-class User(_message.Message):
+class ClientRequest(_message.Message):
   __metaclass__ = _reflection.GeneratedProtocolMessageType
-  DESCRIPTOR = _USER
+  DESCRIPTOR = _CLIENTREQUEST
 
-  # @@protoc_insertion_point(class_scope:atm_message.User)
+  # @@protoc_insertion_point(class_scope:atm_message.ClientRequest)
 
 class ServerResponse(_message.Message):
   __metaclass__ = _reflection.GeneratedProtocolMessageType
