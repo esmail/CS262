@@ -13,6 +13,13 @@ import myServerSend
 from myServerSend import unknown_opcode
 import thread
 
+import hashlib
+# Import the interface to our GPB messages
+import sys
+sys.path.append('./..')
+import messages_pb2
+
+
 version = '\x01'
 #opcode associations
 opcodes = {'\x10': myServerReceive.create_request, 
@@ -40,15 +47,23 @@ def handler(conn,lock, myData):
             #close the thread if the connection is down
             thread.exit()
         #if we receive a message...
-        if len(netbuffer) >= 6:
-            #unpack it...
-            header = struct.unpack('!cIc',netbuffer[0:6])
+        if len(netbuffer) >= 4:
+            # Get the GPB message length
+            length = struct.unpack('!I',netbuffer[0:4])
+            # Populate the message with the data received
+            message = messages_pb2.ClientRequest()
+            message.ParseFromString(netbuffer[4:])
+            # Back up the received checksum and prepare for verification
+            received_checksum = message.checksum
+            message.checksum = ''
+            computed_checksum = hashlib.sha256(message.SerializeToString()).digest()
+            
             #only allow correct version numbers and buffers that are of the appropriate length
-            if header[0] == version and len(netbuffer) == header[1] + 6:
-                opcode = header[2]
+            if (message.version== version) and (len(netbuffer) == length + 4) and (received_checksum == computed_checksum):
+                opcode = message.opcode
                 #try to send packet to correct handler
                 try:
-                    opcodes[opcode](conn,netbuffer,myData,lock)
+                    opcodes[opcode](conn,message,myData,lock)
                 #catch unhandled opcodes
                 except KeyError:
                     if(second_attempt):

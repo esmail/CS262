@@ -4,61 +4,155 @@ Created on Feb 18, 2010
 Altered Feb 20, 2014
 '''
 
-from struct import pack
+import struct
 
-def general_failure(conn, type, reason):
+import hashlib
+# Import the interface to our GPB messages
+import sys
+sys.path.append('./..')
+import messages_pb2
+
+def insert_checksum(message):
+  message.checksum = ''
+  message.checksum = hashlib.sha256(message.SerializeToString()).digest()
+
+
+def general_failure(conn, err_type, reason):
     
     #find the appropriate opcode to send for particular errors
-    if type == 'create':
+    if err_type == 'create':
         typebyte = '\x12'
-    elif type == 'delete':
+    elif err_type == 'delete':
         typebyte = '\x22'
-    elif type == 'deposit':
+    elif err_type == 'deposit':
         typebyte = '\x32'
-    elif type == 'withdraw':
+    elif err_type == 'withdraw':
         typebyte = '\x42'
-    elif type == 'balance':
+    elif err_type == 'balance':
         typebyte = '\x52'
     
-    #encode and send the string
-    utf = reason.encode('utf-8')
-    utflen = len(utf)
-    conn.send('\x01' + pack('!I',2 + utflen) + typebyte + pack('!h',utflen) + utf)
+    # Create a message to be transmitted
+    message = messages_pb2.ServerResponse()
+    message.version = '\x01'
+    message.opcode = typebyte
+    message.error_message = reason.encode('utf-8')
+    insert_checksum(message)
+    
+    # Send
+    message_string = message.SerializeToString()
+    length = len(message_string)
+    
+    conn.send(struct.pack('!I',length))
+    conn.send(message_string)
     return
 
 #create new account
 def create_success(conn,act):
-    conn.send('\x01' + pack('!I',4) +'\x11' + pack('!I',act))
+    # Create a message to be transmitted
+    message = messages_pb2.ServerResponse()
+    message.version = '\x01'
+    message.opcode = '\x11'
+    message.act = act
+    insert_checksum(message)
+    
+    # Send
+    message_string = message.SerializeToString()
+    length = len(message_string)
+    conn.send(struct.pack('!I',length))
+    conn.send(message_string)
     return
 
 #delete an existing account
 def delete_success(conn):
     conn.send('\x01\x00\x00\x00\x00\x21')
+    # Create a message to be transmitted
+    message = messages_pb2.ServerResponse()
+    message.version = '\x01'
+    message.opcode = '\x21'
+    insert_checksum(message)
+    
+    # Send
+    message_string = message.SerializeToString()
+    length = len(message_string)
+    conn.send(struct.pack('!I',length))
+    conn.send(message_string)
     return
 
 #deposit to an existing account
 def deposit_success(conn,bal):
-    conn.send('\x01' + pack('!I',4) +'\x31' + pack('!I',bal))
+    # Create a message to be transmitted
+    message = messages_pb2.ServerResponse()
+    message.version = '\x01'
+    message.opcode = '\x31'
+    message.bal = bal
+    insert_checksum(message)
+    
+    # Send
+    message_string = message.SerializeToString()
+    length = len(message_string)
+    conn.send(struct.pack('!I',length))
+    conn.send(message_string)
     return
 
 #withdraw from an existing account
 def withdraw_success(conn,bal):
-    conn.send('\x01' + pack('!I',4) +'\x41' + pack('!I',bal))
+    # Create a message to be transmitted
+    message = messages_pb2.ServerResponse()
+    message.version = '\x01'
+    message.opcode = '\x41'
+    message.bal = bal
+    insert_checksum(message)
+    
+    # Send
+    message_string = message.SerializeToString()
+    length = len(message_string)
+    conn.send(struct.pack('!I',length))
+    conn.send(message_string)
     return
 
 #withdraw from an existing account
 def balance_success(conn,bal):
-    conn.send('\x01' + pack('!I',4) +'\x51' + pack('!I',bal))
+    # Create a message to be transmitted
+    message = messages_pb2.ServerResponse()
+    message.version = '\x01'
+    message.opcode = '\x51'
+    message.bal = bal
+    insert_checksum(message)
+    
+    # Send
+    message_string = message.SerializeToString()
+    length = len(message_string)
+    conn.send(struct.pack('!I',length))
+    conn.send(message_string)
     return
 
 #end a session
 def end_session_success(conn):
-    conn.send('\x01\x00\x00\x00\x00\x61')
+    # Create a message to be transmitted
+    message = messages_pb2.ServerResponse()
+    message.version = '\x01'
+    message.opcode = '\x61'
+    insert_checksum(message)
+    
+    # Send
+    message_string = message.SerializeToString()
+    length = len(message_string)
+    conn.send(struct.pack('!I',length))
+    conn.send(message_string)
     return
 
 #handle invalid opcodes
 def unknown_opcode(conn):
-    conn.send('\x01\x00\x00\x00\x00\x62')
+    # Create a message to be transmitted
+    message = messages_pb2.ServerResponse()
+    message.version = '\x01'
+    message.opcode = '\x62'
+    insert_checksum(message)
+    
+    # Send
+    message_string = message.SerializeToString()
+    length = len(message_string)
+    conn.send(struct.pack('!I',length))
+    conn.send(message_string)
     return
-
-
+  
