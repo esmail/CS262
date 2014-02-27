@@ -2,7 +2,7 @@ package atm_message;
 
 message ClientRequest {
   required string   version   = 1;
-  required string   checksum  = 2;
+  required bytes    checksum  = 2;
   required string   opcode    = 3;
   required int32    act       = 4;
   optional int32    bal       = 5;
@@ -10,7 +10,7 @@ message ClientRequest {
 
 message ServerResponse {
   required string   version       = 1;
-  required string   checksum      = 2;
+  required bytes    checksum      = 2;
   required string   opcode        = 3;
   optional int32    act           = 4;
   optional int32    bal           = 5;
